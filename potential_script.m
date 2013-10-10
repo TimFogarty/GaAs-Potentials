@@ -1,7 +1,9 @@
-% POTENTIAL_SCRIPT.m models the electrostatic potential of randomly
-% distributed interstitial Mn^{2+} donors which have diffused from
-% p-GaAs to undoped GaAs. The ions are treated as being randomly
-% distributed along a line. The potential is measured along a
+% POTENTIAL_SCRIPT models the electrostatic potential due to randomly
+% distributed charges.
+%
+% SYNOPSIS: This aims to model interstitial Mn^{2+} donors which have
+% diffused from p-GaAs to undoped GaAs. The ions are treated as being
+% randomly distributed along a line. The potential is measured along a
 % parallel line at distance d from the line of ions.
 %
 % Authored by: T. Fogarty & C. Haselden
@@ -19,7 +21,7 @@ chargePos = zeros(1,nIons); % Initialize a vector for holding the
 minDist = 0.127; % The minimum distance (in nm) possible between two
                  % ions. Currently just the atomic radius of Mn
                  % but a better model could be implemented.
-d = 5; % Distance from the ions
+d = 10; % Distance from the ions
 x = linspace(-250, 250, nDataPoints); % The points at which
                                       % potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
@@ -41,11 +43,11 @@ end
 
 for i = 1:length(x)
     % Use POTENTIAL.m to calculate the potential at each data point.
-    xPotential(i) = potential(x(i), chargePos, d);
+    xPotential(i) = GaAsPotential(x(i), d, chargePos);
 end
 
 figure
 plot(x,xPotential)
 title('Potential landscape of randomly distributed charges','interpreter','Latex','FontSize',15);
-xlabel('Position x (nm)','interpreter','latex','FontSize',15);
-ylabel('Potential','interpreter','latex','FontSize',15);
+xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
+ylabel('$V$ (V)','interpreter','latex','FontSize',15);
