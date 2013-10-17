@@ -1,4 +1,4 @@
-Livegrage factor
+Leverage factor
 image charges
 5nm distance from GaAs
 Use matrix calculations not for loops
