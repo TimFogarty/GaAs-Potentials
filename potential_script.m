@@ -46,8 +46,10 @@ for i = 1:length(x)
     xPotential(i) = GaAsPotential(x(i), d, chargePos);
 end
 
+xPotentialU = uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
+
 figure
-plot(x,xPotential)
+plot(x,xPotential - xPotentialU)
 title('Potential landscape of randomly distributed charges','interpreter','Latex','FontSize',15);
 xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
 ylabel('$V$ (V)','interpreter','latex','FontSize',15);

@@ -22,5 +22,5 @@ epsilon0=8.85*(10^-12); % Permittivity of free space
 epsilon = 12.5; % Relative permittivity of GaAs
 V = 0;
 for i = 1:length(chargePos)
-    V = V - (1/(4*pi*epsilon0*epsilon))*((2*e)/((d^2+(x-chargePos(i))^2)^0.5)*10^9);
+    V = V - (1/(4*pi*epsilon0*epsilon))*((2*e)/(((d^2+(x-chargePos(i))^2)^0.5)*10^-9));
 end
