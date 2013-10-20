@@ -15,13 +15,13 @@
 clear; clc; close all;
 l = 500; % Length of GaAs Layer in nm
 nIons = 100; % Number of Mn^{2+} ions
-nDataPoints = 100; % Number of data points at which potential is calculated
+nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the
                             % positions of the Mn^{2+} ions
 minDist = 0.127; % The minimum distance (in nm) possible between two
                  % ions. Currently just the atomic radius of Mn
                  % but a better model could be implemented.
-d = 10; % Distance from the ions
+d = 3; % Distance from the ions
 x = linspace(-250, 250, nDataPoints); % The points at which
                                       % potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
@@ -54,4 +54,4 @@ plot(x,xPotentialFinal)
 title('Potential landscape of randomly distributed charges','interpreter','Latex','FontSize',15);
 xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
 ylabel('$V$ (V)','interpreter','latex','FontSize',15);
-axis([-250 250 -0.2 0.2]);
+axis([-250 250 -0.4 0.2]);
