@@ -21,7 +21,7 @@ chargePos = zeros(1,nIons); % Initialize a vector for holding the
 minDist = 0.127; % The minimum distance (in nm) possible between two
                  % ions. Currently just the atomic radius of Mn
                  % but a better model could be implemented.
-d = 3; % Distance from the ions
+d = 1; % Distance from the ions
 x = linspace(-250, 250, nDataPoints); % The points at which
                                       % potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
@@ -55,3 +55,24 @@ title('Potential landscape of randomly distributed charges','interpreter','Latex
 xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
 ylabel('$V$ (V)','interpreter','latex','FontSize',15);
 axis([-250 250 -0.4 0.2]);
+
+% Define the sampling frequency
+SF = 200;
+% Minimum length of FFT multiplied by 20
+n = 20*(2^nextpow2(length(x))); % Length of FFT
+% Apply Fast Fourier Transform
+X = fft(xPotentialFinal,n); 
+% FFT is symmetric, throw away second half
+X = X(1:n/2); 
+% Ignore imaginary values of X
+Y = abs(X);
+% Normalise the frequency scale
+f = (0:n/2-1)*SF/n;
+% Generate the plot, title and labels.  
+figure(3);
+plot(f,Y); 
+title('Fourier Transform of Potential Landscape'); 
+xlabel('Frequency (Hz)'); 
+ylabel('Power');
+% Limit the x axis (Is there a better way to scale it?)
+xlim([0,0.3]);
