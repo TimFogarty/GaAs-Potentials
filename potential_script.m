@@ -47,9 +47,11 @@ for i = 1:length(x)
 end
 
 xPotentialU = uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
+xPotentialFinal = xPotential - 2.*xPotentialU
 
 figure
-plot(x,xPotential - xPotentialU)
+plot(x,xPotentialFinal)
 title('Potential landscape of randomly distributed charges','interpreter','Latex','FontSize',15);
 xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
 ylabel('$V$ (V)','interpreter','latex','FontSize',15);
+axis([-250 250 -0.2 0.2]);
