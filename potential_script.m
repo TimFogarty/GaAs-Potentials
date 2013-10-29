@@ -27,19 +27,7 @@ x = linspace(-250, 250, nDataPoints); % The points at which
 xPotential = zeros(1,nDataPoints); % Initialize vector for
                                    % potentials at nDataPoints
 
-for i = 1:length(chargePos)
-    chargePos(i) = -l/2 + l*rand(1);
-    for j = 1:(i-1)
-        if (abs(chargePos(i) - chargePos(j)) < minDist)
-            % Check to see if random position is too close to an
-            % ion already assigned a position. If it is,
-            % reiterate.  The chance of random numbers being so
-            % close is small, so the check could be abandoned for 
-            % the sake of speed.
-            i = i - 1;
-        end
-    end
-end
+chargePos = -l/2 + l*rand(nIons);
 
 for i = 1:length(x)
     % Use POTENTIAL.m to calculate the potential at each data point.
@@ -47,7 +35,7 @@ for i = 1:length(x)
 end
 
 xPotentialU = uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
-xPotentialFinal = xPotential - 2.*xPotentialU
+xPotentialFinal = xPotential - 2.*xPotentialU;
 
 figure
 plot(x,xPotentialFinal)
@@ -70,7 +58,7 @@ Y = abs(X);
 f = (0:n/2-1)*SF/n;
 % Generate the plot, title and labels.  
 figure(3);
-plot(f,Y); 
+semilogy(f,Y); 
 title('Fourier Transform of Potential Landscape'); 
 xlabel('Frequency (Hz)'); 
 ylabel('Power');
