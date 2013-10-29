@@ -1,3 +1,4 @@
+function potential_script(l, nIons, d)
 % POTENTIAL_SCRIPT models the electrostatic potential due to randomly
 % distributed charges.
 %
@@ -11,18 +12,13 @@
 % University of Nottingham
 % https://github.com/TimFogarty/GaAs-Potentials
 
-
-clear; clc; close all;
-l = 500; % Length of GaAs Layer in nm
-nIons = 100; % Number of Mn^{2+} ions
+% l = 625; % Length of GaAs Layer in nm 
+% nIons = 100; % Number of Mn^{2+} ions 
 nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the
                             % positions of the Mn^{2+} ions
-minDist = 0.127; % The minimum distance (in nm) possible between two
-                 % ions. Currently just the atomic radius of Mn
-                 % but a better model could be implemented.
-d = 1; % Distance from the ions
-x = linspace(-250, 250, nDataPoints); % The points at which
+% d = 1; % Distance from the ions in nm
+x = linspace(-l*0.8/2, l*0.8/2, nDataPoints); % The points at which
                                       % potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
                                    % potentials at nDataPoints
@@ -37,13 +33,13 @@ end
 xPotentialU = uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
 xPotentialFinal = xPotential - 2.*xPotentialU;
 
-figure
+f1 = figure;
 plot(x,xPotentialFinal)
 title('Potential landscape of randomly distributed charges','interpreter','Latex','FontSize',15);
 xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
 ylabel('$V$ (V)','interpreter','latex','FontSize',15);
 axis([-250 250 -0.4 0.2]);
-
+saveas(f1, sprintf('data/plots/fig1_%g.fig', d), 'fig');
 % Define the sampling frequency
 SF = 200;
 % Minimum length of FFT multiplied by 20
@@ -57,10 +53,15 @@ Y = abs(X);
 % Normalise the frequency scale
 f = (0:n/2-1)*SF/n;
 % Generate the plot, title and labels.  
-figure(3);
-semilogy(f,Y); 
+f2 = figure;
+semilogy(f,Y);
+hold all;
+Y = smooth(Y,2000);
+semilogy(f,Y);
+
 title('Fourier Transform of Potential Landscape'); 
 xlabel('Frequency (Hz)'); 
 ylabel('Power');
 % Limit the x axis (Is there a better way to scale it?)
 xlim([0,0.3]);
+saveas(f1, sprintf('data/plots/fig2_%g.fig', d), 'fig');

@@ -12,6 +12,4 @@ for i = 1:length(xPotentialU)
     xPotentialU(i) = -((nIons*e)/(4*pi*epsilon0*epsilon*l*10^-9))*log((b + sqrt(b^2 + d^2))/(-a + sqrt(a^2 + d^2)));
 end
 
-plot(x, xPotentialU)
-
 V = xPotentialU;
