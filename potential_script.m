@@ -64,4 +64,4 @@ xlabel('Frequency (Hz)');
 ylabel('Power');
 % Limit the x axis (Is there a better way to scale it?)
 xlim([0,0.3]);
-saveas(f1, sprintf('data/plots/fig2_%g.fig', d), 'fig');
+saveas(f2, sprintf('data/plots/fig2_%g.fig', d), 'fig');
