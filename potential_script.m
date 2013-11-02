@@ -1,4 +1,3 @@
-function potential_script(l, nIons, d)
 % POTENTIAL_SCRIPT models the electrostatic potential due to randomly
 % distributed charges.
 %
@@ -12,12 +11,14 @@ function potential_script(l, nIons, d)
 % University of Nottingham
 % https://github.com/TimFogarty/GaAs-Potentials
 
-% l = 625; % Length of GaAs Layer in nm 
-% nIons = 100; % Number of Mn^{2+} ions 
+close all;
+
+l = 625; % Length of GaAs Layer in nm 
+nIons = 100; % Number of Mn^{2+} ions 
 nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the
                             % positions of the Mn^{2+} ions
-% d = 1; % Distance from the ions in nm
+d = 10; % Distance from the ions in nm
 x = linspace(-l*0.8/2, l*0.8/2, nDataPoints); % The points at which
                                       % potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
@@ -32,36 +33,45 @@ end
 
 xPotentialU = uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
 xPotentialFinal = xPotential - 2.*xPotentialU;
+correction = sum(xPotentialFinal)/length(xPotentialFinal);      
+xPotentialFinal = xPotentialFinal + correction;
 
 f1 = figure;
 plot(x,xPotentialFinal)
-title('Potential landscape of randomly distributed charges','interpreter','Latex','FontSize',15);
+title(sprintf(['Potential landscape at a distance %gnm from %g ' ...
+               'randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15);
 xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
 ylabel('$V$ (V)','interpreter','latex','FontSize',15);
 axis([-250 250 -0.4 0.2]);
-saveas(f1, sprintf('data/plots/fig1_%g.fig', d), 'fig');
+
+
 % Define the sampling frequency
 SF = 200;
-% Minimum length of FFT multiplied by 20
-n = 20*(2^nextpow2(length(x))); % Length of FFT
+n = (2^5)*(2^nextpow2(length(x))); % Length of FFT
 % Apply Fast Fourier Transform
-X = fft(xPotentialFinal,n); 
+X1 = fft(xPotentialFinal,n); 
 % FFT is symmetric, throw away second half
-X = X(1:n/2); 
+X2 = X1(1:n/2); 
 % Ignore imaginary values of X
-Y = abs(X);
+Y1 = X2.*conj(X2)/n; % or abs(X2) ??
 % Normalise the frequency scale
-f = (0:n/2-1)*SF/n;
+f = (0:(n/2-1))*SF/n;
 % Generate the plot, title and labels.  
 f2 = figure;
-semilogy(f,Y);
-hold all;
-Y = smooth(Y,2000);
-semilogy(f,Y);
 
-title('Fourier Transform of Potential Landscape'); 
-xlabel('Frequency (Hz)'); 
-ylabel('Power');
+% THESE LINES FOR CUTTING OF ARTEFACTS
+f = f(1:1050); 
+Y1 = Y1(1:1050);
+
+semilogy(f,Y1);
+hold all;
+Y2 = smooth(Y1,10000);
+semilogy(f,Y2);
+
+title(sprintf(['Fourier Transform of Potential Landscape at a distance %g ' ...
+       'from %g randomly distributed charges on a log scale'], d, nIons),'interpreter','Latex','FontSize',15); 
+xlabel('Frequency (Hz)','interpreter','Latex','FontSize',15); 
+ylabel('Power','interpreter','Latex','FontSize',15);
+legend('Fourier transform','Smoothed Fourier transform');
 % Limit the x axis (Is there a better way to scale it?)
 xlim([0,0.3]);
-saveas(f2, sprintf('data/plots/fig2_%g.fig', d), 'fig');
