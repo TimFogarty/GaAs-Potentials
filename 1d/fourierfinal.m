@@ -1,13 +1,13 @@
 % Script to plot the Fourier Transform of a given function
 
 % Define the sampling frequency
-SF = 5000;
+SF = 5;
 % Create a vector of 10^5 points between -10 and 10
-t = -10:1/Fs:10;
+t = -10050:1/SF:10050;
 % Input given function
 x = input('input function: ');
 % Minimum length of FFT multiplied by 20
-n = 20*(2^nextpow2(length(t))); % Length of FFT
+n = (2^5)*(2^nextpow2(length(t))); % Length of FFT
 % Apply Fast Fourier Transform
 X = fft(x,n); 
 % FFT is symmetric, throw away second half
@@ -28,4 +28,4 @@ title('Fourier Transform of f(x)');
 xlabel('Frequency (Hz)'); 
 ylabel('Power');
 % Limit the x axis (Is there a better way to scale it?)
-xlim([0,2]);
+% xlim([0,2]);

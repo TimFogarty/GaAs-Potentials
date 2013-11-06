@@ -11,7 +11,7 @@
 % University of Nottingham
 % https://github.com/TimFogarty/GaAs-Potentials
 
-close all;
+%close all;
 
 l = 625; % Length of GaAs Layer in nm 
 nIons = 100; % Number of Mn^{2+} ions 
@@ -36,17 +36,18 @@ xPotentialFinal = xPotential - 2.*xPotentialU;
 correction = sum(xPotentialFinal)/length(xPotentialFinal);      
 xPotentialFinal = xPotentialFinal + correction;
 
-f1 = figure;
-plot(x,xPotentialFinal)
-title(sprintf(['Potential landscape at a distance %gnm from %g ' ...
-               'randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15);
-xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
-ylabel('$V$ (V)','interpreter','latex','FontSize',15);
-axis([-250 250 -0.4 0.2]);
+%f1 = figure;
+%plot(x,xPotentialFinal)
+%title(sprintf(['Potential landscape at a distance %gnm from %g ' ...
+%               'randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15);
+               %xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
+               %ylabel('$V$ (V)','interpreter','latex','FontSize',15);
+               %axis([-250 250 -0.4 0.2]);
 
 
 % Define the sampling frequency
-SF = 200;
+SF = 500;
+xPotentialFinal = padarray(xPotentialFinal,[0 200],0,'both');
 n = (2^5)*(2^nextpow2(length(x))); % Length of FFT
 % Apply Fast Fourier Transform
 X1 = fft(xPotentialFinal,n); 
@@ -57,16 +58,16 @@ Y1 = X2.*conj(X2)/n; % or abs(X2) ??
 % Normalise the frequency scale
 f = (0:(n/2-1))*SF/n;
 % Generate the plot, title and labels.  
-f2 = figure;
+%f2 = figure;
 
 % THESE LINES FOR CUTTING OF ARTEFACTS
-f = f(1:1050); 
-Y1 = Y1(1:1050);
+%f = f(1:1050); 
+%Y1 = Y1(1:1050);
 
 semilogy(f,Y1);
 hold all;
-Y2 = smooth(Y1,10000);
-semilogy(f,Y2);
+%Y2 = smooth(Y1,10000);
+%semilogy(f,Y2);
 
 title(sprintf(['Fourier Transform of Potential Landscape at a distance %g ' ...
        'from %g randomly distributed charges on a log scale'], d, nIons),'interpreter','Latex','FontSize',15); 
