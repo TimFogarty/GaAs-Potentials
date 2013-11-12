@@ -18,7 +18,7 @@ nIons = 100; % Number of Mn^{2+} ions
 nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the
                             % positions of the Mn^{2+} ions
-d = 10; % Distance from the ions in nm
+d = 1; % Distance from the ions in nm
 x = linspace(-l*0.8/2, l*0.8/2, nDataPoints); % The points at which
                                       % potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
@@ -46,8 +46,9 @@ xPotentialFinal = xPotentialFinal + correction;
 
 
 % Define the sampling frequency
-SF = 500;
-xPotentialFinal = padarray(xPotentialFinal,[0 200],0,'both');
+SF = 50;
+%xPotentialFinal = padarray(xPotentialFinal,[0 2000],0,'both'); %
+%Doesn't work!
 n = (2^5)*(2^nextpow2(length(x))); % Length of FFT
 % Apply Fast Fourier Transform
 X1 = fft(xPotentialFinal,n); 
@@ -66,8 +67,8 @@ f = (0:(n/2-1))*SF/n;
 
 semilogy(f,Y1);
 hold all;
-%Y2 = smooth(Y1,10000);
-%semilogy(f,Y2);
+Y2 = smooth(Y1,1000);
+semilogy(f,Y2);
 
 title(sprintf(['Fourier Transform of Potential Landscape at a distance %g ' ...
        'from %g randomly distributed charges on a log scale'], d, nIons),'interpreter','Latex','FontSize',15); 
