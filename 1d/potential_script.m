@@ -18,7 +18,7 @@ nIons = 100; % Number of Mn^{2+} ions
 nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the
                             % positions of the Mn^{2+} ions
-d = 1; % Distance from the ions in nm
+d = 5; % Distance from the ions in nm
 x = linspace(-l*0.8/2, l*0.8/2, nDataPoints); % The points at which
                                       % potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
