@@ -3,7 +3,7 @@
 % Define the sampling frequency
 SF = 5;
 % Create a vector of 10^5 points between -10 and 10
-t = -10050:1/SF:10050;
+t = -250:1/SF:250;
 % Input given function
 x = input('input function: ');
 % Minimum length of FFT multiplied by 20
@@ -17,15 +17,16 @@ Y = abs(X);
 % Normalise the frequency scale
 f = (0:n/2-1)*SF/n;
 % Generate the plot, title and labels. 
-figure(1);
-plot(t,x);
-title('f(x)'); 
-xlabel('x'); 
-ylabel('f(x)'); 
+%figure(1);
+%plot(t,x);
+%title('f(x)'); 
+%xlabel('x'); 
+%ylabel('f(x)'); 
 figure(2);
-plot(f,Y); 
+semilogy(f,Y); 
 title('Fourier Transform of f(x)'); 
 xlabel('Frequency (Hz)'); 
 ylabel('Power');
 % Limit the x axis (Is there a better way to scale it?)
-% xlim([0,2]);
+% xlim([0,1]);
+hold all;

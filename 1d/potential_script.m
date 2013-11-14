@@ -19,16 +19,18 @@ if (~willhold)
 end
 
 l = 625; % Length of GaAs Layer in nm 
-nIons = 100; % Number of Mn^{2+} ions 
+nIons = 100; % Number of Mn^{2+} ions matlab
+numberOfDataSets = 2;
 nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the positions of the Mn^{2+} ions
 d = 2; % Distance from the ions in nm
 x = linspace(-l*0.8/2, l*0.8/2, nDataPoints); % The points at which potential will be calculated
-xPotential = zeros(10,nDataPoints); % Initialize vector for potentials at nDataPoints
+xPotential = zeros(10,nDataPoints); % Initialize vector for
+                                    % potentials at nDataPoints
 
 xPotentialU = 2*uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
 
-for j = 1:2
+for j = 1:numberOfDataSets
     chargePos = -l/2 + l*rand(nIons);
 
     for i = 1:length(x)
@@ -63,7 +65,7 @@ SF = 50;
 n = (2^5)*(2^nextpow2(length(x))); % Length of FFT
 f = (0:(n/2-1))*SF/n;
 
-for i = 1:2
+for i = 1:NumberOfDataSets
     X1 = fft(xPotentialFinal(i,:),n); 
     X2 = X1(1:n/2);
     if (i == 1)
@@ -92,8 +94,8 @@ satisfied = false;
 
 while (~satisfied)
 
-    cutoff1 = input('where do you want cutoff1? ');
-    cutoff2 = input('where do you want cutoff2? ');
+    cutoff1 = input('where do you want cutoff1? (index, 200 is good): ');
+    cutoff2 = input('where do you want cutoff2? (value): ');
 
     % THESE LINES FOR CUTTING OF ARTEFACTS
     for i = 1:length(f)
