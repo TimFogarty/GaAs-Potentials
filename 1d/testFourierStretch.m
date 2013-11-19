@@ -1,18 +1,24 @@
-% Script to plot the Fourier Transform of a given function
-done = false;
-% Define the sampling frequency
+% TESTFOURIERSTRETCH is for testing how FFT changes depending on the length
+% of the input and the sampling frequency
+%
+% Authored by: T. Fogarty & C. Haselden
+% Supervisor: O. Makarovsky
+% University of Nottingham
+% https://github.com/TimFogarty/GaAs-Potentials
 
-% Create a vector of 10^5 points between -10 and 10
+done = false;
+
+r
 x0 = -250 + 500*rand(1,50);
+
 while(~done)
     tbound = input('width? ')/2;
     SF = input('sampling frequency?' );
     t = -tbound:1/SF:tbound;
     % Input given function
-    x = input('input function: ');
-    % Minimum length of FFT multiplied by 20
+    x = lorentzianSum(t, 10, 500, x0);
     n = (2^5)*(2^nextpow2(length(t))); % Length of FFT
-                                       % Apply Fast Fourier Transform
+    % Apply Fast Fourier Transform
     X = fft(x,n); 
     % FFT is symmetric, throw away second half
     X = X(1:n/2); 
@@ -20,19 +26,12 @@ while(~done)
     Y = abs(X);
     % Normalise the frequency scale
     f = (0:n/2-1)*SF/n;
-    % Generate the plot, title and labels. 
-    %figure(1);
-    %plot(t,x);
-    %title('f(x)'); 
-    %xlabel('x'); 
-    %ylabel('f(x)'); 
-    %figure(2);
+
     semilogy(f,Y); 
     title('Fourier Transform of f(x)'); 
     xlabel('Frequency (Hz)'); 
     ylabel('Power');
-    % Limit the x axis (Is there a better way to scale it?)
-    % xlim([0,1]);
+    
     hold all;
     done = input('done? ');
 end

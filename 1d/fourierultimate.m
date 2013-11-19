@@ -13,9 +13,20 @@ X = fft(x,n);
 % FFT is symmetric, throw away second half
 X = X(1:n/2); 
 % Ignore imaginary values of X
-Y = abs(X);
+Y = X.*conj(X)/n;
 % Normalise the frequency scale
 f = (0:n/2-1)*SF/n;
+
+figure;
+plot(t,x);
+title('f(x)'); 
+xlabel('x'); 
+ylabel('f(x)');
+
+figure;
+
+semilogy(f,Y);
+hold all;
 
 satisfied = false;
 

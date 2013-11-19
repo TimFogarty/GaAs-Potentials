@@ -17,16 +17,16 @@ Y = abs(X);
 % Normalise the frequency scale
 f = (0:n/2-1)*SF/n;
 % Generate the plot, title and labels. 
-%figure(1);
-%plot(t,x);
-%title('f(x)'); 
-%xlabel('x'); 
-%ylabel('f(x)'); 
-figure(2);
-semilogy(f,Y); 
-title('Fourier Transform of f(x)'); 
-xlabel('Frequency (Hz)'); 
-ylabel('Power');
+
+plot(t,x);
+title('f(x)'); 
+xlabel('x'); 
+ylabel('f(x)'); 
+%figure(2);
+%semilogy(f,Y); 
+%title('Fourier Transform of f(x)'); 
+%xlabel('Frequency (Hz)'); 
+%ylabel('Power');
 % Limit the x axis (Is there a better way to scale it?)
 % xlim([0,1]);
 hold all;

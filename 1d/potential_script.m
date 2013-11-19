@@ -11,12 +11,21 @@
 % University of Nottingham
 % https://github.com/TimFogarty/GaAs-Potentials
 
-graph1 = false;
-willhold = false;
+graph1 = true; % Graph potential landscape
+graph2 = false; % Graph FFT
+willhold = false; % Will hold graphs
 
 if (~willhold)
     close all;
 end
+
+
+
+% =============================================================== %
+%                                                                 %
+%                 Calculate Potential Landscape                   %
+%                                                                 %
+% =============================================================== %
 
 l = 625; % Length of GaAs Layer in nm 
 nIons = 100; % Number of Mn^{2+} ions matlab
@@ -42,73 +51,55 @@ for j = 1:numberOfDataSets
     xPotentialFinal(j,:) = xPotential(j,:) - xPotentialU;
     correction = sum(xPotentialFinal(j,:))/length(xPotentialFinal(j,:));      
     xPotentialFinal(j,:) = xPotentialFinal(j,:) + correction;
-    plot(x,xPotentialFinal)
-    title(sprintf(['Potential landscape at a distance %gnm from %g ' ...
-                   'randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15);
-    xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
-    ylabel('$V$ (V)','interpreter','latex','FontSize',15);
-    axis([-250 250 -0.4 0.2]);
 end
+
+
+
+% =============================================================== %
+%                                                                 %
+%                   Graph Potential Landscape                     %
+%                                                                 %
+% =============================================================== %
 
 if (graph1)
     f1 = figure;
-    plot(x,xPotentialFinal)
+    plot(x,xPotentialFinal(1,:))
     title(sprintf(['Potential landscape at a distance %gnm from %g ' ...
                    'randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15);
     xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
     ylabel('$V$ (V)','interpreter','latex','FontSize',15);
     axis([-250 250 -0.4 0.2]);
+    hold all
 end
 
 
-SF = 50;
-n = (2^5)*(2^nextpow2(length(x))); % Length of FFT
-f = (0:(n/2-1))*SF/n;
 
-for i = 1:NumberOfDataSets
-    X1 = fft(xPotentialFinal(i,:),n); 
-    X2 = X1(1:n/2);
-    if (i == 1)
-       Y1 = X2.*conj(X2)/n;
-    else
-        Y1 = Y1 + X2.*conj(X2)/n;
-    end
-end
+% =============================================================== %
+%                                                                 %
+%                   FFT of Potential Landscape                    %
+%                                                                 %
+% =============================================================== %
 
-semilogy(f,Y1);
-if (willhold)
-    hold all;
-end
-%Y2 = smooth(Y1,1000);
-%semilogy(f,Y2);
+if (graph2)
 
-title(sprintf(['Fourier Transform of Potential Landscape at a distance %g ' ...
-       'from %g randomly distributed charges on a log scale'], d, nIons),'interpreter','Latex','FontSize',15); 
-xlabel('Frequency (Hz)','interpreter','Latex','FontSize',15); 
-ylabel('Power','interpreter','Latex','FontSize',15);
-legend('Fourier transform','Smoothed Fourier transform');
-% Limit the x axis (Is there a better way to scale it?)
-xlim([0,0.3]);
+    SF = 50;
+    n = (2^5)*(2^nextpow2(length(x))); % Length of FFT
+    f = (0:(n/2-1))*SF/n;
 
-satisfied = false;
-
-while (~satisfied)
-
-    cutoff1 = input('where do you want cutoff1? (index, 200 is good): ');
-    cutoff2 = input('where do you want cutoff2? (value): ');
-
-    % THESE LINES FOR CUTTING OF ARTEFACTS
-    for i = 1:length(f)
-        if(f(i) > cutoff2)
-            f = f(cutoff1:i); 
-            Y1 = Y1(cutoff1:i);
-            Y2 = log(Y1);
-            break;
+    for i = 1:numberOfDataSets
+        X1 = fft(xPotentialFinal(i,:),n); 
+        X2 = X1(1:n/2);
+        if (i == 1)
+            Y1 = X2.*conj(X2)/n;
+        else
+            Y1 = Y1 + X2.*conj(X2)/n;
         end
     end
-    
+
     semilogy(f,Y1);
-    hold all;
+    if (willhold)
+        hold all;
+    end
 
     title(sprintf(['Fourier Transform of Potential Landscape at a distance %g ' ...
                    'from %g randomly distributed charges on a log scale'], d, nIons),'interpreter','Latex','FontSize',15); 
@@ -118,5 +109,42 @@ while (~satisfied)
     % Limit the x axis (Is there a better way to scale it?)
     xlim([0,0.3]);
 
-    satisfied = input('Satisfied? (true, false): ');
+    
+    
+    % =============================================================== %
+    %                                                                 %
+    %                        Cut off artefacts                        %
+    %                                                                 %
+    % =============================================================== %
+    
+    satisfied = false;
+    
+    while (~satisfied)
+
+        cutoff1 = input('where do you want cutoff1? (index, 200 is good): ');
+        cutoff2 = input('where do you want cutoff2? (value): ');
+
+        % THESE LINES FOR CUTTING OF ARTEFACTS
+        for i = 1:length(f)
+            if(f(i) > cutoff2)
+                f = f(cutoff1:i); 
+                Y1 = Y1(cutoff1:i);
+                Y2 = log(Y1);
+                break;
+            end
+        end
+        
+        semilogy(f,Y1);
+        hold all;
+
+        title(sprintf(['Fourier Transform of Potential Landscape at a distance %g ' ...
+                       'from %g randomly distributed charges on a log scale'], d, nIons),'interpreter','Latex','FontSize',15); 
+        xlabel('Frequency (Hz)','interpreter','Latex','FontSize',15); 
+        ylabel('Power','interpreter','Latex','FontSize',15);
+        legend('Fourier transform','Smoothed Fourier transform');
+        % Limit the x axis (Is there a better way to scale it?)
+        xlim([0,0.3]);
+
+        satisfied = input('Satisfied? (true, false): ');
+    end
 end
