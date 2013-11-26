@@ -11,8 +11,8 @@
 % University of Nottingham
 % https://github.com/TimFogarty/GaAs-Potentials
 
-graph1 = true; % Graph potential landscape
-graph2 = false; % Graph FFT
+graph1 = false; % Graph potential landscape
+graph2 = true; % Graph FFT
 willhold = false; % Will hold graphs
 
 if (~willhold)
@@ -32,9 +32,9 @@ nIons = 100; % Number of Mn^{2+} ions matlab
 numberOfDataSets = 2;
 nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the positions of the Mn^{2+} ions
-d = 2; % Distance from the ions in nm
+d = 5; % Distance from the ions in nm
 x = linspace(-l*0.8/2, l*0.8/2, nDataPoints); % The points at which potential will be calculated
-xPotential = zeros(10,nDataPoints); % Initialize vector for
+xPotential = zeros(numberOfDataSets,nDataPoints); % Initialize vector for
                                     % potentials at nDataPoints
 
 xPotentialU = 2*uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
@@ -69,7 +69,6 @@ if (graph1)
     xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
     ylabel('$V$ (V)','interpreter','latex','FontSize',15);
     axis([-250 250 -0.4 0.2]);
-    hold all
 end
 
 
@@ -95,7 +94,7 @@ if (graph2)
             Y1 = Y1 + X2.*conj(X2)/n;
         end
     end
-
+    f2 = figure;
     semilogy(f,Y1);
     if (willhold)
         hold all;

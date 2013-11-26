@@ -14,6 +14,7 @@ X = fft(x,n);
 X = X(1:n/2); 
 % Ignore imaginary values of X
 Y = X.*conj(X)/n;
+%Y = abs(X);
 % Normalise the frequency scale
 f = (0:n/2-1)*SF/n;
 
