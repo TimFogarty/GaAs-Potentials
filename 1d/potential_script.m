@@ -11,8 +11,8 @@
 % University of Nottingham
 % https://github.com/TimFogarty/GaAs-Potentials
 
-graph1 = false; % Graph potential landscape
-graph2 = true; % Graph FFT
+graph1 = true; % Graph potential landscape
+graph2 = false; % Graph FFT
 willhold = false; % Will hold graphs
 
 if (~willhold)
@@ -28,30 +28,35 @@ end
 % =============================================================== %
 
 l = 625; % Length of GaAs Layer in nm 
-nIons = 100; % Number of Mn^{2+} ions matlab
+nIons = 1000; % Number of Mn^{2+} ions matlab
 numberOfDataSets = 2;
 nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the positions of the Mn^{2+} ions
 d = 5; % Distance from the ions in nm
 x = linspace(-l*0.8/2, l*0.8/2, nDataPoints); % The points at which potential will be calculated
-xPotential = zeros(numberOfDataSets,nDataPoints); % Initialize vector for
+xPotential = zeros(1,nDataPoints); % Initialize vector for
                                     % potentials at nDataPoints
 
 xPotentialU = 2*uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
 
-for j = 1:numberOfDataSets
-    chargePos = -l/2 + l*rand(nIons);
 
-    for i = 1:length(x)
-        % Use POTENTIAL.m to calculate the potential at each data point.
-        xPotential(j,i) = GaAsPotential(x(i), d, chargePos);
-    end
+chargePos = -l/2 + l*rand(1,nIons);
 
-    
-    xPotentialFinal(j,:) = xPotential(j,:) - xPotentialU;
-    correction = sum(xPotentialFinal(j,:))/length(xPotentialFinal(j,:));      
-    xPotentialFinal(j,:) = xPotentialFinal(j,:) + correction;
+e=1.60*(10^-19); % Elementary charge
+epsilon0=8.85*(10^-12); % Permittivity of free space
+epsilon = 12.5; % Relative permittivity of GaAs
+k = (1/(4*pi*epsilon0*epsilon));
+
+tic;
+for i = 1:nDataPoints
+    xPotential(i) = sum( -k*(2*e)./(( sqrt( d^2 + (x(i)-chargePos).^2 ) )*10^-9));
 end
+toc;
+
+xPotentialFinal = xPotential - xPotentialU;
+correction = sum(xPotentialFinal)/length(xPotentialFinal);      
+xPotentialFinal = xPotentialFinal + correction;
+
 
 
 
@@ -68,7 +73,7 @@ if (graph1)
                    'randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15);
     xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
     ylabel('$V$ (V)','interpreter','latex','FontSize',15);
-    axis([-250 250 -0.4 0.2]);
+    %axis([-250 250 -0.4 0.2]);
 end
 
 
