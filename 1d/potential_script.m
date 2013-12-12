@@ -12,7 +12,7 @@
 % https://github.com/TimFogarty/GaAs-Potentials
 
 graph1 = true; % Graph potential landscape
-graph2 = false; % Graph FFT
+graph2 = true; % Graph FFT
 willhold = false; % Will hold graphs
 
 if (~willhold)
@@ -27,18 +27,18 @@ end
 %                                                                 %
 % =============================================================== %
 
-l = 625; % Length of GaAs Layer in nm 
-nIons = 10000; % Number of Mn^{2+} ions matlab
-numberOfDataSets = 2;
-nDataPoints = 100000; % Number of data points at which potential is calculated
+l = 10000; % Length of GaAs Layer in nm 
+nIons = 1E6; % Number of Mn^{2+} ions matlab
+numberOfDataSets = 1;
+nDataPoints = 2^14; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the positions of the Mn^{2+} ions
-d = 5; % Distance from the ions in nm
-x = linspace(-l*0.8/2, l*0.8/2, nDataPoints); % The points at which potential will be calculated
+d = 6; % Distance from the ions in nm
+x = linspace(-900/2, 900/2, nDataPoints); % The points at which potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
                                     % potentials at nDataPoints
-
+tic;
 xPotentialU = 2*uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
-
+toc;
 
 chargePos = -l/2 + l*rand(1,nIons);
 
@@ -46,16 +46,26 @@ e=1.60*(10^-19); % Elementary charge
 epsilon0=8.85*(10^-12); % Permittivity of free space
 epsilon = 12.5; % Relative permittivity of GaAs
 k = (1/(4*pi*epsilon0*epsilon));
+const = -k*(2*e)*10^9;
 
 tic;
 for i = 1:nDataPoints
-    xPotential(i) = sum( -k*(2*e)./(( sqrt( d^2 + (x(i)-chargePos).^2 ) )*10^-9));
+    xPotential(i) = sum(const./( sqrt( d^2 + (x(i)-chargePos).^2 ) ));
 end
 toc;
 
-xPotentialFinal = xPotential - xPotentialU;
-correction = sum(xPotentialFinal)/length(xPotentialFinal);      
-xPotentialFinal = xPotentialFinal + correction;
+% xPotentialFinal = xPotential - xPotentialU;
+% correction = sum(xPotentialFinal)/length(xPotentialFinal);      
+% xPotentialFinal = xPotentialFinal + correction;
+
+
+xPotential = min(xPotential) - xPotential;
+p = polyfit(x, xPotential, 2);
+yy = polyval(p,x);
+y = xPotential - yy;
+xPotentialFinal = y - max(y);
+xPotentialFinal = xPotentialFinal - mean(xPotentialFinal);
+
 
 
 
@@ -68,7 +78,7 @@ xPotentialFinal = xPotentialFinal + correction;
 
 if (graph1)
     f1 = figure;
-    plot(x,xPotentialFinal(1,:))
+    plot(x,xPotentialFinal)
     title(sprintf(['Potential landscape at a distance %gnm from %g ' ...
                    'randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15);
     xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
@@ -85,22 +95,26 @@ end
 % =============================================================== %
 
 if (graph2)
-
+    
+    tic;
+    
     SF = 50;
     n = (2^5)*(2^nextpow2(length(x))); % Length of FFT
     f = (0:(n/2-1))*SF/n;
 
     for i = 1:numberOfDataSets
-        X1 = fft(xPotentialFinal(i,:),n); 
-        X2 = X1(1:n/2);
-        if (i == 1)
-            Y1 = X2.*conj(X2)/n;
-        else
-            Y1 = Y1 + X2.*conj(X2)/n;
-        end
+        X1 = fft(xPotentialFinal)/size(xPotentialFinal,2); 
+        PX = sqrt(X1.*conj(X1))*2;
+        NumFFT = size(X1,2)/2;
+        dx = x(2) - x(1);
+        PPX = PX(1:NumFFT);
+        ff = ((1:NumFFT)-1)./(max(x)-min(x));
     end
+    
+    toc;
+    
     f2 = figure;
-    semilogy(f,Y1);
+    semilogy(ff,PPX);
     if (willhold)
         hold all;
     end
@@ -111,7 +125,7 @@ if (graph2)
     ylabel('Power','interpreter','Latex','FontSize',15);
     legend('Fourier transform','Smoothed Fourier transform');
     % Limit the x axis (Is there a better way to scale it?)
-    xlim([0,0.3]);
+    %xlim([0,0.3]);
 
     
     
@@ -130,15 +144,15 @@ if (graph2)
 
         % THESE LINES FOR CUTTING OF ARTEFACTS
         for i = 1:length(f)
-            if(f(i) > cutoff2)
-                f = f(cutoff1:i); 
-                Y1 = Y1(cutoff1:i);
-                Y2 = log(Y1);
+            if(ff(i) > cutoff2)
+                ff = ff(cutoff1:i); 
+                PPX = PPX(cutoff1:i);
+                PPX2 = log(PPX);
                 break;
             end
         end
         
-        semilogy(f,Y1);
+        semilogy(ff,PPX);
         hold all;
 
         title(sprintf(['Fourier Transform of Potential Landscape at a distance %g ' ...
@@ -147,7 +161,7 @@ if (graph2)
         ylabel('Power','interpreter','Latex','FontSize',15);
         legend('Fourier transform','Smoothed Fourier transform');
         % Limit the x axis (Is there a better way to scale it?)
-        xlim([0,0.3]);
+        % xlim([0,0.3]);
 
         satisfied = input('Satisfied? (true, false): ');
     end
