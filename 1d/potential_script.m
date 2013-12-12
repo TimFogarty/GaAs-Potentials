@@ -28,7 +28,7 @@ end
 % =============================================================== %
 
 l = 625; % Length of GaAs Layer in nm 
-nIons = 1000; % Number of Mn^{2+} ions matlab
+nIons = 10000; % Number of Mn^{2+} ions matlab
 numberOfDataSets = 2;
 nDataPoints = 100000; % Number of data points at which potential is calculated
 chargePos = zeros(1,nIons); % Initialize a vector for holding the positions of the Mn^{2+} ions
