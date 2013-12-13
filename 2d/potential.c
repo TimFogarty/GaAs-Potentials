@@ -36,8 +36,10 @@ void potential(double a, double d, double *x, double *y, double *charge, double 
 		
 	    }
 	}
-	mexPrintf("%d\n", sizeX - i);
-	mexEvalString("drawnow;");
+	if (i%100 == 0) {
+	    mexPrintf("Iterations remaining: %d\n", (sizeX - i));
+	    mexEvalString("drawnow;clc;");
+	}
     }
 }
 
