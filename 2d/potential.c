@@ -36,7 +36,7 @@ void potential(double a, double d, double *x, double *y, double *charge, double 
 		
 	    }
 	}
-	mexPrintf("%d\n",i);
+	mexPrintf("%d\n", sizeX - i);
 	mexEvalString("drawnow;");
     }
 }
