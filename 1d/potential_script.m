@@ -12,7 +12,7 @@
 % https://github.com/TimFogarty/GaAs-Potentials
 
 graph1 = true; % Graph potential landscape
-graph2 = true; % Graph FFT
+graph2 = false; % Graph FFT
 willhold = false; % Will hold graphs
 
 if (~willhold)
@@ -30,9 +30,15 @@ end
 l = 10000; % Length of GaAs Layer in nm 
 nIons = 1E6; % Number of Mn^{2+} ions matlab
 numberOfDataSets = 1;
-nDataPoints = 2^14; % Number of data points at which potential is calculated
-chargePos = zeros(1,nIons); % Initialize a vector for holding the positions of the Mn^{2+} ions
-d = 6; % Distance from the ions in nm
+nDataPoints = 2^14; % Number of data points at which potential is
+                    % calculated
+if(~exist('chargePos'))
+    chargePos = zeros(1,nIons); % Initialize a vector for holding
+                                % the positions of the Mn^{2+} ions
+    chargePos = -l/2 + l*rand(1,nIons);
+end
+
+d = 2; % Distance from the ions in nm
 x = linspace(-9000/2, 9000/2, nDataPoints); % The points at which potential will be calculated
 xPotential = zeros(1,nDataPoints); % Initialize vector for
                                     % potentials at nDataPoints
@@ -40,7 +46,7 @@ tic;
 xPotentialU = 2*uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
 toc;
 
-chargePos = -l/2 + l*rand(1,nIons);
+
 
 e=1.60*(10^-19); % Elementary charge
 epsilon0=8.85*(10^-12); % Permittivity of free space
@@ -54,17 +60,17 @@ for i = 1:nDataPoints
 end
 toc;
 
-% xPotentialFinal = xPotential - xPotentialU;
-% correction = sum(xPotentialFinal)/length(xPotentialFinal);      
-% xPotentialFinal = xPotentialFinal + correction;
+xPotentialFinal = xPotential - xPotentialU;
+correction = sum(xPotentialFinal)/length(xPotentialFinal);      
+xPotentialFinal = xPotentialFinal + correction;
 
 
-xPotential = min(xPotential) - xPotential;
-p = polyfit(x, xPotential, 2);
-yy = polyval(p,x);
-y = xPotential - yy;
-xPotentialFinal = y - max(y);
-xPotentialFinal = xPotentialFinal - mean(xPotentialFinal);
+% xPotential = min(xPotential) - xPotential;
+% p = polyfit(x, xPotential, 2);
+% yy = polyval(p,x);
+% y = xPotential - yy;
+% xPotentialFinal = y - max(y);
+% xPotentialFinal = xPotentialFinal - mean(xPotentialFinal);
 
 
 

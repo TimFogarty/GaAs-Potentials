@@ -34,7 +34,8 @@ d = 1; % Distance from the ions in nm
 chargePos = -l/2 + l*rand(2,nIons);
 x = linspace(-250, 250, 1000);
 y = linspace(-250, 250, 1000);
-xPotential = zeros(nDataPoints); 
+xPotential1 = zeros(nDataPoints/2,nDataPoints); 
+xPotential1 = zeros(nDataPoints/2,nDataPoints); 
 
 e=1.60*(10^-19); % Elementary charge
 epsilon0=8.85*(10^-12); % Permittivity of free space
@@ -43,10 +44,19 @@ k = (1/(4*pi*epsilon0*epsilon));
 const = -k*(2*e)*10^9;
 
 tic;
-for i = 1:nDataPoints
+parfor i = 1:nDataPoints/2
     for j = 1:nDataPoints
-        xPotential(i,j) = sum(const./(sqrt(d^2 + (x(i)-chargePos(1,:)).^2 ...
+        xPotential1(i,j) = sum(const./(sqrt(d^2 + (x(i)-chargePos(1,:)).^2 ...
                                            + (y(j) - chargePos(2,:)).^2 ...
+                                           )));
+    end
+    
+end
+
+parfor k = 1:nDataPoints/2
+    for l = 1:nDataPoints
+        xPotential2(k,l) = sum(const./(sqrt(d^2 + (x(k)-chargePos(1,:)).^2 ...
+                                           + (y(l) - chargePos(2,:)).^2 ...
                                            )));
     end
     
