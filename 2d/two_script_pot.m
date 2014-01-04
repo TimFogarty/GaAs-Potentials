@@ -13,7 +13,7 @@
 
 
 l = 1000; % Length of GaAs Layer in nm 
-nIons = 100; % Number of Mn^{2+} ions matlab
+nIons = 1000; % Number of Mn^{2+} ions matlab
 nDataPoints = 1000; 
 d = 1; % Distance from the ions in nm
 chargePos = -l/2 + l*rand(2,nIons);
@@ -34,7 +34,7 @@ for i = 1:nDataPoints
                                            + (y(j) - chargePos(2,:)).^2 ...
                                            )));
     end
-    
+i
 end
 toc;
 
