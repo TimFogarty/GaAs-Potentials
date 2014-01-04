@@ -11,21 +11,6 @@
 % University of Nottingham
 % https://github.com/TimFogarty/GaAs-Potentials
 
-graph1 = true; % Graph potential landscape
-graph2 = true; % Graph FFT
-willhold = false; % Will hold graphs
-
-if (~willhold)
-    close all;
-end
-
-
-
-% =============================================================== %
-%                                                                 %
-%                 Calculate Potential Landscape                   %
-%                                                                 %
-% =============================================================== %
 
 l = 1000; % Length of GaAs Layer in nm 
 nIons = 100; % Number of Mn^{2+} ions matlab
@@ -52,3 +37,5 @@ for i = 1:nDataPoints
     
 end
 toc;
+
+save(sprintf('workspaces/potential%g.mat', d));
