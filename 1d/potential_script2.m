@@ -28,25 +28,31 @@ end
 % =============================================================== %
 
 l = 10000; % Length of GaAs Layer in nm 
-nIons = 100; % Number of Mn^{2+} ions matlab
-numberOfDataSets = 200;
-nDataPoints = 2^14; % Number of data points at which potential is
-                    % calculated
-if(~exist('chargePos'))
-    chargePos = zeros(numberOfDataSets,nIons); % Initialize a vector for holding
-                                % the positions of the Mn^{2+} ions
-    chargePos = -l/2 + l*rand(numberOfDataSets,nIons);
-end
-
+nIons = 1E6; % Number of Mn^{2+} ions matlab
+numberOfDataSets = 2;
+nDataPoints = 2^14; % Number of data points at which potential is calculated
+chargePos = zeros(1,nIons); % Initialize a vector for holding the positions of the Mn^{2+} ions
 d = 2; % Distance from the ions in nm
 x = linspace(-9000/2, 9000/2, nDataPoints); % The points at which potential will be calculated
-xPotential = zeros(numberOfDataSets,nDataPoints); % Initialize vector for
+xPotential = zeros(1,nDataPoints); % Initialize vector for
                                     % potentials at nDataPoints
-xPotentialFinal = zeros(numberOfDataSets,nDataPoints);
-
+tic;
 xPotentialU = 2*uniformPotential(l,x,zeros(1,nDataPoints),d,nIons);
+toc;
 
+for j = 1:numberOfDataSets
+    chargePos = -l/2 + l*rand(nIons);
 
+    for i = 1:length(x)
+        % Use POTENTIAL.m to calculate the potential at each data point.
+        xPotential(j,i) = GaAsPotential(x(i), d, chargePos);
+    end
+
+    
+    xPotentialFinal(j,:) = xPotential(j,:) - xPotentialU;
+    correction = sum(xPotentialFinal(j,:))/length(xPotentialFinal(j,:));      
+    xPotentialFinal(j,:) = xPotentialFinal(j,:) + correction;
+end
 
 
 e=1.60*(10^-19); % Elementary charge
@@ -54,46 +60,6 @@ epsilon0=8.85*(10^-12); % Permittivity of free space
 epsilon = 12.5; % Relative permittivity of GaAs
 k = (1/(4*pi*epsilon0*epsilon));
 const = -k*(2*e)*10^9;
-
-tic;
-for j = 1:numberOfDataSets
-    for i = 1:nDataPoints
-        xPotential(j,i) = sum(const./( sqrt( d^2 + (x(i)-chargePos(j,:)).^2 ) ));
-    end
-    
-    xPotentialFinal(j,:) = xPotential(j,:) - xPotentialU;
-    correction = sum(xPotentialFinal(j,:))/length(xPotentialFinal(j,:));      
-    xPotentialFinal(j,:) = xPotentialFinal(j,:) + correction;
-end
-toc;
-
-
-% xPotential = min(xPotential) - xPotential;
-% p = polyfit(x, xPotential, 2);
-% yy = polyval(p,x);
-% y = xPotential - yy;
-% xPotentialFinal = y - max(y);
-% xPotentialFinal = xPotentialFinal - mean(xPotentialFinal);
-
-
-
-
-
-% =============================================================== %
-%                                                                 %
-%                   Graph Potential Landscape                     %
-%                                                                 %
-% =============================================================== %
-
-if (graph1)
-    f1 = figure;
-    plot(x,xPotentialFinal)
-    title(sprintf(['Potential landscape at a distance %gnm from %g ' ...
-                   'randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15);
-    xlabel('$x$ (nm)','interpreter','latex','FontSize',15);
-    ylabel('$V$ (V)','interpreter','latex','FontSize',15);
-    %axis([-250 250 -0.4 0.2]);
-end
 
 
 
@@ -103,31 +69,25 @@ end
 %                                                                 %
 % =============================================================== %
 
-
-    
-    tic;
+if (graph2)
     
     SF = 50;
     n = (2^5)*(2^nextpow2(length(x))); % Length of FFT
     f = (0:(n/2-1))*SF/n;
 
     for i = 1:numberOfDataSets
-        X1 = fft(xPotentialFinal(i,:))/size(xPotentialFinal(i,:),2); 
-        PX = sqrt(X1.*conj(X1))*2;
+        X1 = fft(xPotentialFinal(i,:),n)./size(xPotentialFinal,2); 
+        if (i == 1)
+            PX = sqrt(X1.*conj(X1))*2;
+        else
+            PX = PX + sqrt(X1.*conj(X1))*2;
+        end
         NumFFT = size(X1,2)/2;
         dx = x(2) - x(1);
         PPX = PX(1:NumFFT);
-        if (i == 1)
-            ff = ((1:NumFFT)-1)./(max(x)-min(x));
-        else
-            ff = ff + ((1:NumFFT)-1)./(max(x)-min(x));
-        end
+        ff = ((1:NumFFT)-1)./(max(x)-min(x));
     end
     
-    toc;
-    
-if (graph2)    
-    f2 = figure;
     semilogy(ff,PPX);
     if (willhold)
         hold all;
@@ -169,13 +129,11 @@ if (graph2)
         semilogy(ff,PPX);
         hold all;
 
-        title(sprintf(['Fourier Transform of Potential Landscape at a distance %g ' ...
-                       'from %g randomly distributed charges on a log scale'], d, nIons),'interpreter','Latex','FontSize',15); 
+        title(sprintf(['Fourier Transforms of Potential Landscapes at various distances d from a line of randomly distributed charges'], d, nIons),'interpreter','Latex','FontSize',15); 
         xlabel('Frequency (Hz)','interpreter','Latex','FontSize',15); 
         ylabel('Power','interpreter','Latex','FontSize',15);
         legend('Fourier transform','Smoothed Fourier transform');
-        % Limit the x axis (Is there a better way to scale it?)
-        % xlim([0,0.3]);
+    
 
         satisfied = input('Satisfied? (true, false): ');
     end

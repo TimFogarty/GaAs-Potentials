@@ -61,10 +61,6 @@ u = (R.*p(0,t) + r.*p(1,t)...
 
 plot(R,u);
 
-uu = fliplr(R);
-
-plot(R,uu)
-
 % plot(p(0,t),t);
 % hold on
 % plot(p(1,t),t);
