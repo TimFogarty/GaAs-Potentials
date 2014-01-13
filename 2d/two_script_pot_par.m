@@ -13,12 +13,13 @@
 
 
 l = 1000; % Length of GaAs Layer in nm 
-nIons = 1E6; % Number of Mn^{2+} ions matlab
-nDataPoints = 1000; 
+nIons = 10000; % Number of Mn^{2+} ions matlab
+nDataPoints = 500; 
+x = linspace(-250, 250, 500);
+y = linspace(-250, 250, 500);
 d = 1; % Distance from the ions in nm
 chargePos = -l/2 + l*rand(2,nIons);
-x = linspace(-250, 250, 1000);
-y = linspace(-250, 250, 1000);
+
 xPotential = zeros(nDataPoints); 
 
 e=1.60*(10^-19); % Elementary charge
@@ -29,7 +30,7 @@ const = -k*(2*e)*10^9;
 
 
 tic;
-parfor i = 1:nDataPoints
+for i = 1:nDataPoints
     for j = 1:nDataPoints
         xPotential(i,j) = sum(const./(sqrt(d^2 + (x(i)-chargePos(1,:)).^2 ...
                                            + (y(j) - chargePos(2,:)).^2 ...
@@ -38,5 +39,3 @@ parfor i = 1:nDataPoints
     i
 end
 toc;
-
-save(sprintf('workspaces/potential%g.mat', d));

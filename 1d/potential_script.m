@@ -11,8 +11,8 @@
 % University of Nottingham
 % https://github.com/TimFogarty/GaAs-Potentials
 
-graph1 = true; % Graph potential landscape
-graph2 = true; % Graph FFT
+graph1 = false; % Graph potential landscape
+graph2 = false; % Graph FFT
 willhold = false; % Will hold graphs
 
 if (~willhold)
@@ -28,8 +28,8 @@ end
 % =============================================================== %
 
 l = 10000; % Length of GaAs Layer in nm 
-nIons = 100; % Number of Mn^{2+} ions matlab
-numberOfDataSets = 200;
+nIons = 1E6; % Number of Mn^{2+} ions matlab
+numberOfDataSets = 1;
 nDataPoints = 2^14; % Number of data points at which potential is
                     % calculated
 if(~exist('chargePos'))
@@ -38,7 +38,7 @@ if(~exist('chargePos'))
     chargePos = -l/2 + l*rand(numberOfDataSets,nIons);
 end
 
-d = 2; % Distance from the ions in nm
+% d = 1; % Distance from the ions in nm
 x = linspace(-9000/2, 9000/2, nDataPoints); % The points at which potential will be calculated
 xPotential = zeros(numberOfDataSets,nDataPoints); % Initialize vector for
                                     % potentials at nDataPoints

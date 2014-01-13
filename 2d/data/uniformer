@@ -1,0 +1,25 @@
+test = 0;
+lower = 0;
+higher = 0;
+f = 0.5;
+while(test ~= 86.8666)
+    if(test < 86.8666)
+        ff = 1+f;
+        if (lower == 0)
+            f = f/2;
+        end
+        lower = lower+1;
+        higher = 0;
+    elseif (test > 86.8666)
+        ff = 1-f;
+        if (higher == 0)
+            f = f/2;
+        end
+        higher = higher+1;
+        lower = 0;
+    end
+    xpp = xpp*ff;
+    test = max(max(xpp))-min(min(xpp));
+    disp(test)
+end
+disp(done)
